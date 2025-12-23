@@ -3,66 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SOS Emergency - Safety in your pocket</title>
+    <title>Privacy Policy | SOS Emergency System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .hero-gradient { background: linear-gradient(135deg, #b71c1c 0%, #7f0000 100%); }
+        body { scroll-behavior: smooth; }
+        .sidebar-link:hover { color: #b91c1c; border-left: 2px solid #b91c1c; padding-left: 0.5rem; transition: all 0.2s; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800">
+<body class="bg-gray-50 text-gray-900 font-sans">
 
-    <nav class="bg-white shadow-md p-4">
-        <div class="container mx-auto flex justify-between items-center">
-            <h1 class="text-2xl font-bold text-red-700">🚨 SOS Emergency</h1>
-            <div class="space-x-6 font-medium">
-                <a href="#features" class="hover:text-red-700">Features</a>
-                <a href="#privacy" class="hover:text-red-700">Privacy</a>
-                <a href="mailto:your-email@example.com" class="bg-red-700 text-white px-4 py-2 rounded-lg">Support</a>
+    <header class="bg-white border-b sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <span class="text-2xl">🚨</span>
+                <span class="font-bold text-xl tracking-tight">SOS <span class="text-red-700">DOCS</span></span>
             </div>
+            <div class="text-sm text-gray-500 font-medium">Version 1.1.0 (Dec 2025)</div>
         </div>
-    </nav>
-
-    <header class="hero-gradient text-white py-20 px-4 text-center">
-        <h2 class="text-4xl md:text-6xl font-extrabold mb-4">Instant Safety, One Tap Away</h2>
-        <p class="text-xl opacity-90 mb-8 max-w-2xl mx-auto">Connecting you to emergency contacts and AI-driven location intelligence when every second counts.</p>
-        <button class="bg-white text-red-700 font-bold px-8 py-3 rounded-full text-lg shadow-lg">Download on APKPure</button>
     </header>
 
-    <section id="features" class="container mx-auto py-20 px-4">
-        <div class="grid md:grid-cols-3 gap-12">
-            <div class="text-center p-6 bg-white rounded-xl shadow-sm">
-                <div class="text-4xl mb-4">📍</div>
-                <h3 class="text-xl font-bold mb-2">Live GPS Tracking</h3>
-                <p class="text-gray-600">Instantly captures your precise coordinates to share with your trusted network.</p>
-            </div>
-            <div class="text-center p-6 bg-white rounded-xl shadow-sm border-t-4 border-purple-500">
-                <div class="text-4xl mb-4">🤖</div>
-                <h3 class="text-xl font-bold mb-2">AI Analysis</h3>
-                <p class="text-gray-600">Gemini 2.5 Flash-Lite analyzes your location to find the nearest hospitals and police stations.</p>
-            </div>
-            <div class="text-center p-6 bg-white rounded-xl shadow-sm">
-                <div class="text-4xl mb-4">📲</div>
-                <h3 class="text-xl font-bold mb-2">Instant Alerts</h3>
-                <p class="text-gray-600">Automated messaging ensures your family knows exactly where you are immediately.</p>
-            </div>
-        </div>
-    </section>
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row">
+        
+        <aside class="w-full md:w-64 p-6 bg-gray-50 md:h-screen md:sticky md:top-16 overflow-y-auto">
+            <nav class="space-y-4 text-sm font-semibold text-gray-600">
+                <div class="uppercase tracking-wider text-xs text-gray-400">Documentation</div>
+                <a href="#introduction" class="block sidebar-link">1. Introduction</a>
+                <a href="#data-collection" class="block sidebar-link">2. Data Collection</a>
+                <a href="#processing" class="block sidebar-link">3. AI & Data Processing</a>
+                <a href="#storage" class="block sidebar-link">4. Security & Storage</a>
+                <a href="#user-rights" class="block sidebar-link">5. User Rights (GDPR/CPRA)</a>
+                <a href="#contact" class="block sidebar-link">6. Contact & Support</a>
+            </nav>
+        </aside>
 
-    <section id="privacy" class="bg-white py-20 px-4 border-t">
-        <div class="container mx-auto max-w-4xl">
-            <h2 class="text-3xl font-bold mb-8 text-center">Privacy & Transparency</h2>
-            <div class="bg-gray-50 p-8 rounded-lg text-sm md:text-base leading-relaxed">
-                <p class="mb-4"><strong>Data Collection:</strong> We collect precise location data and emergency contact information only when an alert is triggered.</p>
-                <p class="mb-4"><strong>Data Usage:</strong> Your location is shared with your contacts and processed by the Gemini API for emergency facility mapping.</p>
-                <p class="mb-4"><strong>Data Protection:</strong> All transmissions are encrypted. We do not sell or share your personal data with third-party advertisers.</p>
-                <p class="text-red-700 font-bold mt-4 italic">This website serves as the official documentation for the SOS Emergency mobile application.</p>
-            </div>
-        </div>
-    </section>
+        <main class="flex-1 p-6 md:p-12 bg-white shadow-sm">
+            
+            <article class="prose prose-slate max-w-none">
+                <h1 class="text-4xl font-extrabold mb-8">Privacy Policy</h1>
+                
+                <section id="introduction" class="mb-12">
+                    <h2 class="text-2xl font-bold border-b pb-2 mb-4">1. Introduction</h2>
+                    <p class="text-gray-600 leading-relaxed">
+                        The SOS Emergency System is designed to protect lives by facilitating rapid communication between users and responders. This documentation outlines our protocols for handling sensitive geospatial and personal data in accordance with global privacy standards (GDPR, PECR, and CPRA).
+                    </p>
+                </section>
 
-    <footer class="bg-gray-900 text-white py-10 text-center">
-        <p>&copy; 2025 SOS Emergency System. Built for Safety.</p>
-    </footer>
+                <section id="data-collection" class="mb-12">
+                    <h2 class="text-2xl font-bold border-b pb-2 mb-4">2. Data Collection</h2>
+                    <p class="mb-4 text-gray-600">Our application utilizes the following data to provide emergency services:</p>
+                    <ul class="list-disc pl-6 space-y-2 text-gray-600">
+                        <li><strong>Real-Time Geolocation:</strong> Precise Latitude, Longitude, and Altitude data.</li>
+                        <li><strong>Personal Identity:</strong> Verified mobile number and user-provided emergency profile.</li>
+                        <li><strong>Contact Access:</strong> Access to selected "Emergency Contacts" for automated SMS notification.</li>
+                    </ul>
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mt-6">
+                        <p class="text-sm text-blue-800"><strong>Note:</strong> Geolocation is <u>only</u> accessed and transmitted when the SOS trigger is activated by the user.</p>
+                    </div>
+                </section>
+
+                <section id="processing" class="mb-12">
+                    <h2 class="text-2xl font-bold border-b pb-2 mb-4">3. AI & Data Processing</h2>
+                    <p class="text-gray-600 mb-4">
+                        We utilize the <strong>Google Gemini API</strong> for value-added location intelligence. This process includes:
+                    </p>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="p-4 bg-gray-50 rounded border">
+                            <h4 class="font-bold mb-1">Infrastructure Mapping</h4>
+                            <p class="text-xs text-gray-500">Identifying the nearest 2 medical facilities and police precincts relative to coordinates.</p>
+                        </div>
+                        <div class="p-4 bg-gray-50 rounded border">
+                            <h4 class="font-bold mb-1">Geospatial Context</h4>
+                            <p class="text-xs text-gray-500">Analyzing terrain and urban density to assist dispatchers in vehicle selection.</p>
+                        </div>
+                    </div>
+                    <p class="mt-4 text-sm text-gray-500 italic">No personally identifiable information (PII) is sent to the AI model; only raw geospatial coordinates are processed.</p>
+                </section>
+
+                <section id="storage" class="mb-12">
+                    <h2 class="text-2xl font-bold border-b pb-2 mb-4">4. Security & Storage</h2>
+                    <p class="text-gray-600 mb-4">
+                        All data is protected by high-level encryption standards:
+                    </p>
+                    <table class="min-w-full text-sm text-left">
+                        <thead class="bg-gray-100 uppercase text-xs">
+                            <tr>
+                                <th class="px-4 py-2">Data State</th>
+                                <th class="px-4 py-2">Security Protocol</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b">
+                                <td class="px-4 py-2">In Transit</td>
+                                <td class="px-4 py-2 font-mono">TLS 1.3 / SSL Encryption</td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="px-4 py-2">At Rest</td>
+                                <td class="px-4 py-2 font-mono">AES-256 Bit Encryption</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section id="user-rights" class="mb-12">
+                    <h2 class="text-2xl font-bold border-b pb-2 mb-4">5. User Rights</h2>
+                    <p class="text-gray-600 mb-4">Users maintain full control over their data:</p>
+                    <ul class="list-disc pl-6 space-y-2 text-gray-600">
+                        <li><strong>Right to Deletion:</strong> Users can request full data erasure at any time via the Support panel.</li>
+                        <li><strong>Consent Revocation:</strong> Location permissions can be toggled off instantly in device settings.</li>
+                        <li><strong>Data Portability:</strong> Users may request a machine-readable log of their alert history.</li>
+                    </ul>
+                </section>
+
+                <section id="contact" class="bg-red-50 p-8 rounded-xl border border-red-100">
+                    <h2 class="text-2xl font-bold text-red-900 mb-2">6. Contact Support</h2>
+                    <p class="text-red-800 mb-4">For privacy inquiries or data removal requests:</p>
+                    <a href="mailto:support@yourdomain.com" class="inline-block bg-red-700 text-white px-6 py-2 rounded font-bold hover:bg-red-800 transition">Email Privacy Officer</a>
+                </section>
+
+            </article>
+
+            <footer class="mt-20 pt-8 border-t text-center text-gray-400 text-xs">
+                &copy; 2025 SOS Emergency System. All rights reserved. 
+                <br>This document is legally binding as part of the Terms of Service.
+            </footer>
+
+        </main>
+    </div>
 
 </body>
 </html>
