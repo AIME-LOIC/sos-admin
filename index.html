@@ -3,151 +3,230 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SOS Admin Dashboard</title>
+    <title>SOS Response | Instant Emergency Assistance</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        /* --- CSS STYLES --- */
         :root {
-            --primary-red: #b71c1c;
-            --hover-red: #ef5350;
-            --ai-purple: #673ab7;
+            --primary-red: #d32f2f;
+            --dark-red: #8e0000;
+            --white: #ffffff;
+            --light-gray: #f4f4f4;
+            --text-dark: #333;
         }
-        body { font-family: 'Segoe UI', sans-serif; background: #f4f4f4; margin: 0; }
-        nav { background: var(--primary-red); color: white; padding: 1rem; text-align: center; font-size: 1.5rem; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-        .container { padding: 20px; max-width: 1200px; margin: auto; }
-        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
-        th { background: #f8f9fa; color: #333; }
-        
-        .status-active { color: #d32f2f; font-weight: bold; text-transform: uppercase; display: flex; align-items: center; gap: 5px; }
-        .status-active::before { content: ""; width: 8px; height: 8px; background: red; border-radius: 50%; display: inline-block; animation: blink 1s infinite; }
-        
-        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
 
-        .btn-group { display: flex; gap: 8px; }
-        .btn { padding: 8px 12px; border-radius: 4px; cursor: pointer; text-decoration: none; font-size: 0.85rem; border: none; font-weight: 500; color: white; transition: 0.2s; }
-        .btn-map { background: var(--primary-red); }
-        .btn-map:hover { background: var(--hover-red); }
-        .btn-ai { background: var(--ai-purple); }
-        .btn-ai:hover { opacity: 0.9; }
-        .refresh-btn { background: #333; margin-bottom: 10px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; scroll-behavior: smooth; }
+        body { color: var(--text-dark); line-height: 1.6; background-color: var(--white); }
 
-        /* Modal Styles */
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); }
-        .modal-content { background: white; margin: 10% auto; padding: 25px; border-radius: 12px; width: 50%; max-width: 600px; position: relative; box-shadow: 0 5px 30px rgba(0,0,0,0.3); }
-        .close { position: absolute; right: 20px; top: 15px; font-size: 24px; cursor: pointer; color: #666; }
-        .modal-header { border-bottom: 2px solid #eee; margin-bottom: 15px; padding-bottom: 10px; color: var(--ai-purple); display: flex; align-items: center; gap: 10px; }
-        #ai-response { line-height: 1.6; color: #444; white-space: pre-line; }
-        .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--ai-purple); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; display: none; margin: 20px auto; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        /* Navigation */
+        nav { 
+            background: var(--white); 
+            padding: 0.8rem 5%; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
+            position: sticky; 
+            top: 0; 
+            z-index: 1000; 
+        }
+        
+        .logo { 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            text-decoration: none; 
+            color: var(--primary-red); 
+            font-size: 1.5rem; 
+            font-weight: bold; 
+        }
+
+        .nav-logo {
+            width: 45px;
+            height: 45px;
+            object-fit: contain;
+        }
+
+        .nav-links a { 
+            margin-left: 20px; 
+            text-decoration: none; 
+            color: var(--text-dark); 
+            font-weight: 500; 
+            transition: 0.3s; 
+        }
+        .nav-links a:hover { color: var(--primary-red); }
+
+        .admin-btn {
+            border: 2px solid var(--primary-red);
+            padding: 6px 15px;
+            border-radius: 5px;
+            color: var(--primary-red) !important;
+        }
+
+        /* Hero Section */
+        .hero { 
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1583321500900-82807e458f3c?auto=format&fit=crop&w=1350&q=80');
+            background-size: cover; 
+            background-position: center;
+            min-height: 70vh; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center;
+            text-align: center; 
+            color: white; 
+            padding: 100px 20px;
+        }
+        .hero h1 { font-size: clamp(2rem, 5vw, 3.5rem); margin-bottom: 1rem; }
+        .hero p { font-size: 1.2rem; max-width: 700px; margin-bottom: 2.5rem; opacity: 0.9; }
+        .btn { background: var(--primary-red); color: white; padding: 15px 35px; border-radius: 5px; text-decoration: none; font-weight: bold; transition: 0.3s; box-shadow: 0 4px 15px rgba(211, 47, 47, 0.4); }
+        .btn:hover { background: var(--dark-red); transform: translateY(-2px); }
+
+        /* Problem & Solution Section */
+        .mission-section { padding: 100px 5%; background: var(--white); }
+        .container { max-width: 1200px; margin: auto; }
+        .mission-grid { display: flex; gap: 30px; flex-wrap: wrap; }
+        .mission-box { 
+            flex: 1; 
+            min-width: 300px; 
+            padding: 40px; 
+            border-radius: 12px; 
+            color: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+        .problem { background: #2c3e50; } 
+        .solution { background: var(--primary-red); }
+        .mission-box i { font-size: 2.5rem; margin-bottom: 20px; display: block; }
+        .mission-box h2 { font-size: 1.8rem; margin-bottom: 15px; }
+        .mission-box p { font-size: 1.05rem; opacity: 0.9; }
+
+        /* Features Section */
+        .features { padding: 100px 5%; text-align: center; background: var(--light-gray); }
+        .features h2 { margin-bottom: 50px; font-size: 2.5rem; }
+        .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
+        .feature-card { padding: 40px; border-radius: 15px; background: var(--white); transition: 0.3s; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
+        .feature-card:hover { transform: translateY(-10px); }
+        .feature-card i { font-size: 3rem; color: var(--primary-red); margin-bottom: 25px; }
+
+        /* AI Analysis Section */
+        .ai-section { background: var(--white); padding: 100px 5%; }
+        .ai-container { display: flex; align-items: center; flex-wrap: wrap; max-width: 1200px; margin: auto; gap: 50px; }
+        .ai-text { flex: 1; min-width: 320px; }
+        .ai-text h2 { color: var(--primary-red); margin-bottom: 20px; font-size: 2.2rem; }
+        .ai-text ul { list-style: none; margin-top: 20px; }
+        .ai-text ul li { margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+        .ai-text ul li::before { content: "✔"; color: var(--primary-red); font-weight: bold; }
+        .ai-image { flex: 1; min-width: 320px; text-align: center; }
+        .ai-image img { width: 100%; max-width: 480px; height: auto; border-radius: 15px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+
+        /* Footer */
+        footer { background: #1a1a1a; color: white; text-align: center; padding: 60px 0; margin-top: 50px; }
+        .footer-socials { margin-bottom: 25px; }
+        .footer-socials a { color: white; margin: 0 15px; font-size: 1.6rem; transition: 0.3s; }
+        .footer-socials a:hover { color: var(--primary-red); }
+        .footer-info p { opacity: 0.6; font-size: 0.9rem; }
+
+        /* Responsive Fixes */
+        @media (max-width: 768px) {
+            nav { flex-direction: column; gap: 15px; padding: 15px; }
+            .nav-links a { margin: 0 10px; font-size: 0.9rem; }
+            .hero h1 { font-size: 2.2rem; }
+            .ai-container { flex-direction: column-reverse; }
+        }
     </style>
 </head>
 <body>
 
-<nav>🚨 SOS EMERGENCY ADMIN PANEL</nav>
-
-<div class="container">
-    <button class="btn refresh-btn" onclick="fetchAlerts()">🔄 Refresh Alerts</button>
-    <div class="card">
-        <h3>Recent Emergency Alerts</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Time</th>
-                    <th>User ID</th>
-                    <th>Coordinates</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody id="alerts-body"></tbody>
-        </table>
-    </div>
-</div>
-
-<div id="aiModal" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="closeModal()">&times;</span>
-        <div class="modal-header">
-            <h3>🤖 Gemini AI Location Analysis</h3>
+    <nav>
+        <a href="#" class="logo">
+            <img src="sos.png" alt="SOS Logo" class="nav-logo">
+            Emergency
+        </a>
+        <div class="nav-links">
+            <a href="#mission">Mission</a>
+            <a href="#features">Features</a>
+            <a href="#about">About AI</a>
+            <a href="admin.html" class="admin-btn">Admin Panel</a>
         </div>
-        <div id="loader" class="loader"></div>
-        <div id="ai-response">Select an alert to analyze location context...</div>
-    </div>
-</div>
+    </nav>
 
-<script>
-    const BASE_URL = "https://sos-backend-q0h6.onrender.com";
-    const modal = document.getElementById("aiModal");
-    const aiResponse = document.getElementById("ai-response");
-    const loader = document.getElementById("loader");
+    <header class="hero">
+        <h1>Seconds Count in an Emergency</h1>
+        <p>A direct, high-speed lifeline connecting you to responders and loved ones when every moment matters.</p>
+        <a href="#" class="btn"><i class="fab fa-google-play"></i> Download the App</a>
+    </header>
 
-    async function fetchAlerts() {
-        try {
-            const response = await fetch(`${BASE_URL}/admin/all-alerts`);
-            const data = await response.json();
-            const tableBody = document.getElementById('alerts-body');
-            tableBody.innerHTML = ""; 
+    <section class="mission-section" id="mission">
+        <div class="container">
+            <div class="mission-grid">
+                <div class="mission-box problem">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h2>The Problem</h2>
+                    <p>In high-stress crises, describing your location is difficult. Voice calls can be interrupted, and traditional dispatch systems often lose vital minutes pinpointing your exact position.</p>
+                </div>
+                <div class="mission-box solution">
+                    <i class="fas fa-check-circle"></i>
+                    <h2>Our Solution</h2>
+                    <p>One-touch silent alerts. Our system transmits precise GPS data and medical profiles instantly, bypassing the need for verbal communication while Gemini AI optimizes the response route.</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-            data.forEach(alert => {
-                const date = new Date(alert.created_at).toLocaleString();
-                const googleMapsUrl = `https://www.google.com/maps?q=${alert.latitude},${alert.longitude}`;
-                
-                const row = `
-                    <tr>
-                        <td>${date}</td>
-                        <td><small>${alert.user_id.substring(0,8)}...</small></td>
-                        <td>${alert.latitude.toFixed(4)}, ${alert.longitude.toFixed(4)}</td>
-                        <td><span class="status-active">${alert.status}</span></td>
-                        <td>
-                            <div class="btn-group">
-                                <a href="${googleMapsUrl}" target="_blank" class="btn btn-map">📍 Map</a>
-                                <button onclick="analyzeLocation(${alert.latitude}, ${alert.longitude})" class="btn btn-ai">🤖 Analyze AI</button>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-                tableBody.innerHTML += row;
-            });
-        } catch (error) {
-            console.error("Error:", error);
-        }
-    }
+    <section class="features" id="features">
+        <div class="container">
+            <h2>System Capabilities</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <i class="fas fa-bullseye"></i>
+                    <h3>Instant GPS</h3>
+                    <p>Sends high-precision coordinates with sub-meter accuracy to emergency dispatchers immediately.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-robot"></i>
+                    <h3>AI Dispatch</h3>
+                    <p>Integrated Gemini AI identifies the nearest trauma centers and police stations based on live coordinates.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-comment-medical"></i>
+                    <h3>SMS Lifeline</h3>
+                    <p>Automatically triggers an SMS to your emergency contacts with a live Google Maps tracking link.</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    async function analyzeLocation(lat, lon) {
-        // Open Modal and show loading
-        modal.style.display = "block";
-        aiResponse.innerText = "";
-        loader.style.display = "block";
+    <section class="ai-section" id="about">
+        <div class="ai-container">
+            <div class="ai-image">
+                <img src="https://images.unsplash.com/photo-1551288049-bbbda536ad0a?auto=format&fit=crop&w=800&q=80" alt="AI Data Analysis Map">
+            </div>
+            <div class="ai-text">
+                <h2>Intelligence in Action</h2>
+                <p>We don't just send location data; we provide situational intelligence. Using <strong>Gemini 1.5 Flash</strong>, our system analyzes the surroundings to assist responders:</p>
+                <ul>
+                    <li>Identifies the best trauma-certified hospitals.</li>
+                    <li>Locates strategic security dispatch points.</li>
+                    <li>Evaluates location-based risks (Remote vs. Urban).</li>
+                </ul>
+                <p style="margin-top: 20px;">Faster data means faster response times, and faster response times save lives.</p>
+            </div>
+        </div>
+    </section>
 
-        try {
-            const response = await fetch(`${BASE_URL}/admin/analyze-location`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ latitude: lat, longitude: lon })
-            });
-            const data = await response.json();
-            
-            loader.style.display = "none";
-            aiResponse.innerText = data.analysis;
-        } catch (error) {
-            loader.style.display = "none";
-            aiResponse.innerText = "Error: Could not reach Gemini AI Service.";
-        }
-    }
-
-    function closeModal() {
-        modal.style.display = "none";
-    }
-
-    // Close modal when clicking outside
-    window.onclick = function(event) {
-        if (event.target == modal) closeModal();
-    }
-
-    fetchAlerts();
-    setInterval(fetchAlerts, 30000);
-</script>
+    <footer>
+        <div class="container">
+            <div class="footer-socials">
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                <a href="privacy.html">privacy policy</a>
+            </div>
+            <div class="footer-info">
+                <p>&copy; 2025 SOS Emergency System. Built for rapid response and safety.</p>
+            </div>
+        </div>
+    </footer>
 
 </body>
 </html>

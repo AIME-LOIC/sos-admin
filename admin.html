@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOS Admin Dashboard</title>
+    <style>
+        :root {
+            --primary-red: #b71c1c;
+            --hover-red: #ef5350;
+            --ai-purple: #673ab7;
+        }
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f4f4; margin: 0; }
+        nav { background: var(--primary-red); color: white; padding: 1rem; text-align: center; font-size: 1.5rem; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .container { padding: 20px; max-width: 1200px; margin: auto; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background: #f8f9fa; color: #333; }
+        
+        .status-active { color: #d32f2f; font-weight: bold; text-transform: uppercase; display: flex; align-items: center; gap: 5px; }
+        .status-active::before { content: ""; width: 8px; height: 8px; background: red; border-radius: 50%; display: inline-block; animation: blink 1s infinite; }
+        
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+
+        .btn-group { display: flex; gap: 8px; }
+        .btn { padding: 8px 12px; border-radius: 4px; cursor: pointer; text-decoration: none; font-size: 0.85rem; border: none; font-weight: 500; color: white; transition: 0.2s; }
+        .btn-map { background: var(--primary-red); }
+        .btn-map:hover { background: var(--hover-red); }
+        .btn-ai { background: var(--ai-purple); }
+        .btn-ai:hover { opacity: 0.9; }
+        .refresh-btn { background: #333; margin-bottom: 10px; }
+
+        /* Modal Styles */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); }
+        .modal-content { background: white; margin: 10% auto; padding: 25px; border-radius: 12px; width: 50%; max-width: 600px; position: relative; box-shadow: 0 5px 30px rgba(0,0,0,0.3); }
+        .close { position: absolute; right: 20px; top: 15px; font-size: 24px; cursor: pointer; color: #666; }
+        .modal-header { border-bottom: 2px solid #eee; margin-bottom: 15px; padding-bottom: 10px; color: var(--ai-purple); display: flex; align-items: center; gap: 10px; }
+        #ai-response { line-height: 1.6; color: #444; white-space: pre-line; }
+        .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--ai-purple); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; display: none; margin: 20px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+<nav>🚨 SOS EMERGENCY ADMIN PANEL</nav>
+
+<div class="container">
+    <button class="btn refresh-btn" onclick="fetchAlerts()">🔄 Refresh Alerts</button>
+    <div class="card">
+        <h3>Recent Emergency Alerts</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>User ID</th>
+                    <th>Coordinates</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="alerts-body"></tbody>
+        </table>
+    </div>
+</div>
+
+<div id="aiModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <div class="modal-header">
+            <h3>🤖 Gemini AI Location Analysis</h3>
+        </div>
+        <div id="loader" class="loader"></div>
+        <div id="ai-response">Select an alert to analyze location context...</div>
+    </div>
+</div>
+
+<script>
+    const BASE_URL = "https://sos-backend-q0h6.onrender.com";
+    const modal = document.getElementById("aiModal");
+    const aiResponse = document.getElementById("ai-response");
+    const loader = document.getElementById("loader");
+
+    async function fetchAlerts() {
+        try {
+            const response = await fetch(`${BASE_URL}/admin/all-alerts`);
+            const data = await response.json();
+            const tableBody = document.getElementById('alerts-body');
+            tableBody.innerHTML = ""; 
+
+            data.forEach(alert => {
+                const date = new Date(alert.created_at).toLocaleString();
+                const googleMapsUrl = `https://www.google.com/maps?q=${alert.latitude},${alert.longitude}`;
+                
+                const row = `
+                    <tr>
+                        <td>${date}</td>
+                        <td><small>${alert.user_id.substring(0,8)}...</small></td>
+                        <td>${alert.latitude.toFixed(4)}, ${alert.longitude.toFixed(4)}</td>
+                        <td><span class="status-active">${alert.status}</span></td>
+                        <td>
+                            <div class="btn-group">
+                                <a href="${googleMapsUrl}" target="_blank" class="btn btn-map">📍 Map</a>
+                                <button onclick="analyzeLocation(${alert.latitude}, ${alert.longitude})" class="btn btn-ai">🤖 Analyze AI</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                tableBody.innerHTML += row;
+            });
+        } catch (error) {
+            console.error("Error:", error);
+        }
+    }
+
+    async function analyzeLocation(lat, lon) {
+        // Open Modal and show loading
+        modal.style.display = "block";
+        aiResponse.innerText = "";
+        loader.style.display = "block";
+
+        try {
+            const response = await fetch(`${BASE_URL}/admin/analyze-location`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ latitude: lat, longitude: lon })
+            });
+            const data = await response.json();
+            
+            loader.style.display = "none";
+            aiResponse.innerText = data.analysis;
+        } catch (error) {
+            loader.style.display = "none";
+            aiResponse.innerText = "Error: Could not reach Gemini AI Service.";
+        }
+    }
+
+    function closeModal() {
+        modal.style.display = "none";
+    }
+
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+        if (event.target == modal) closeModal();
+    }
+
+    fetchAlerts();
+    setInterval(fetchAlerts, 30000);
+</script>
+
+</body>
+</html>
