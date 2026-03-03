@@ -30,6 +30,10 @@
         .btn-map:hover { background: var(--hover-red); }
         .btn-ai { background: var(--ai-purple); }
         .btn-ai:hover { opacity: 0.9; }
+        .btn-user { background: #1565c0; }
+        .btn-user:hover { opacity: 0.9; }
+        .btn-call { background: #2e7d32; }
+        .btn-call:hover { opacity: 0.9; }
         .refresh-btn { background: #333; margin-bottom: 10px; }
 
         /* Modal Styles */
@@ -54,7 +58,7 @@
             <thead>
                 <tr>
                     <th>Time</th>
-                    <th>User ID</th>
+                    <th>User</th>
                     <th>Coordinates</th>
                     <th>Status</th>
                     <th>Actions</th>
@@ -76,10 +80,22 @@
     </div>
 </div>
 
+<div id="userModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeUserModal()">&times;</span>
+        <div class="modal-header">
+            <h3>👤 User Detail</h3>
+        </div>
+        <div id="user-response">Select a user to view details...</div>
+    </div>
+</div>
+
 <script>
     const BASE_URL = "https://sos-backend-q0h6.onrender.com";
     const modal = document.getElementById("aiModal");
+    const userModal = document.getElementById("userModal");
     const aiResponse = document.getElementById("ai-response");
+    const userResponse = document.getElementById("user-response");
     const loader = document.getElementById("loader");
 
     async function fetchAlerts() {
@@ -92,17 +108,35 @@
             data.forEach(alert => {
                 const date = new Date(alert.created_at).toLocaleString();
                 const googleMapsUrl = `https://www.google.com/maps?q=${alert.latitude},${alert.longitude}`;
+                const user = alert.user || {};
+                const fullName = user.full_name || alert.full_name || "Unknown";
+                const userPhone = user.phone || alert.phone || "N/A";
+                const emergencyContact = user.emergency_contact || "N/A";
+                const bloodType = user.blood_type || "N/A";
+                const userRole = user.role || "N/A";
+                const userId = user.id || alert.user_id || "";
                 
                 const row = `
                     <tr>
                         <td>${date}</td>
-                        <td><small>${alert.user_id.substring(0,8)}...</small></td>
+                        <td><small>${fullName}<br>${String(userId).substring(0,8)}...</small></td>
                         <td>${alert.latitude.toFixed(4)}, ${alert.longitude.toFixed(4)}</td>
                         <td><span class="status-active">${alert.status}</span></td>
                         <td>
                             <div class="btn-group">
                                 <a href="${googleMapsUrl}" target="_blank" class="btn btn-map">📍 Map</a>
                                 <button onclick="analyzeLocation(${alert.latitude}, ${alert.longitude})" class="btn btn-ai">🤖 Analyze AI</button>
+                                <button
+                                    onclick='showUserDetails(${JSON.stringify({
+                                        id: userId,
+                                        full_name: fullName,
+                                        phone: userPhone,
+                                        emergency_contact: emergencyContact,
+                                        blood_type: bloodType,
+                                        role: userRole
+                                    }).replace(/'/g, "&#39;")})'
+                                    class="btn btn-user"
+                                >👤 User Detail</button>
                             </div>
                         </td>
                     </tr>
@@ -140,9 +174,31 @@
         modal.style.display = "none";
     }
 
+    function showUserDetails(user) {
+        const callBtn = user.emergency_contact && user.emergency_contact !== "N/A"
+            ? `<a href="tel:${user.emergency_contact}" class="btn btn-call">📞 Call Emergency Contact</a>`
+            : `<span style="color:#888">No emergency contact available</span>`;
+
+        userResponse.innerHTML = `
+            <p><strong>Full Name:</strong> ${user.full_name || "N/A"}</p>
+            <p><strong>User ID:</strong> ${user.id || "N/A"}</p>
+            <p><strong>Phone:</strong> ${user.phone || "N/A"}</p>
+            <p><strong>Emergency Contact:</strong> ${user.emergency_contact || "N/A"}</p>
+            <p><strong>Blood Type:</strong> ${user.blood_type || "N/A"}</p>
+            <p><strong>Role:</strong> ${user.role || "N/A"}</p>
+            <div style="margin-top: 14px;">${callBtn}</div>
+        `;
+        userModal.style.display = "block";
+    }
+
+    function closeUserModal() {
+        userModal.style.display = "none";
+    }
+
     // Close modal when clicking outside
     window.onclick = function(event) {
         if (event.target == modal) closeModal();
+        if (event.target == userModal) closeUserModal();
     }
 
     fetchAlerts();
