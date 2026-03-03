@@ -174,18 +174,45 @@
         modal.style.display = "none";
     }
 
-    function showUserDetails(user) {
-        const callBtn = user.emergency_contact && user.emergency_contact !== "N/A"
-            ? `<a href="tel:${user.emergency_contact}" class="btn btn-call">📞 Call Emergency Contact</a>`
+    function needsLookup(user) {
+        return !user
+            || !user.id
+            || user.full_name === "Unknown"
+            || user.phone === "N/A"
+            || user.emergency_contact === "N/A"
+            || user.blood_type === "N/A"
+            || user.role === "N/A";
+    }
+
+    async function loadUserDetails(userId) {
+        if (!userId) return null;
+        try {
+            const response = await fetch(`${BASE_URL}/admin/user/${userId}`);
+            if (!response.ok) return null;
+            return await response.json();
+        } catch (error) {
+            return null;
+        }
+    }
+
+    async function showUserDetails(user) {
+        let details = user;
+        if (needsLookup(user)) {
+            const fetched = await loadUserDetails(user.id);
+            if (fetched) details = fetched;
+        }
+
+        const callBtn = details.emergency_contact && details.emergency_contact !== "N/A"
+            ? `<a href="tel:${details.emergency_contact}" class="btn btn-call">📞 Call Emergency Contact</a>`
             : `<span style="color:#888">No emergency contact available</span>`;
 
         userResponse.innerHTML = `
-            <p><strong>Full Name:</strong> ${user.full_name || "N/A"}</p>
-            <p><strong>User ID:</strong> ${user.id || "N/A"}</p>
-            <p><strong>Phone:</strong> ${user.phone || "N/A"}</p>
-            <p><strong>Emergency Contact:</strong> ${user.emergency_contact || "N/A"}</p>
-            <p><strong>Blood Type:</strong> ${user.blood_type || "N/A"}</p>
-            <p><strong>Role:</strong> ${user.role || "N/A"}</p>
+            <p><strong>Full Name:</strong> ${details.full_name || "N/A"}</p>
+            <p><strong>User ID:</strong> ${details.id || "N/A"}</p>
+            <p><strong>Phone:</strong> ${details.phone || "N/A"}</p>
+            <p><strong>Emergency Contact:</strong> ${details.emergency_contact || "N/A"}</p>
+            <p><strong>Blood Type:</strong> ${details.blood_type || "N/A"}</p>
+            <p><strong>Role:</strong> ${details.role || "N/A"}</p>
             <div style="margin-top: 14px;">${callBtn}</div>
         `;
         userModal.style.display = "block";
