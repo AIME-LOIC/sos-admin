@@ -1,274 +1,339 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SOS Admin Dashboard</title>
-    <style>
-        :root {
-            --primary-red: #b71c1c;
-            --hover-red: #ef5350;
-            --ai-purple: #673ab7;
-        }
-        body { font-family: 'Segoe UI', sans-serif; background: #f4f4f4; margin: 0; }
-        nav { background: var(--primary-red); color: white; padding: 1rem; text-align: center; font-size: 1.5rem; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-        .container { padding: 20px; max-width: 1200px; margin: auto; }
-        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
-        th { background: #f8f9fa; color: #333; }
-        
-        .status-active { color: #d32f2f; font-weight: bold; text-transform: uppercase; display: flex; align-items: center; gap: 5px; }
-        .status-active::before { content: ""; width: 8px; height: 8px; background: red; border-radius: 50%; display: inline-block; animation: blink 1s infinite; }
-        
-        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
-
-        .btn-group { display: flex; gap: 8px; }
-        .btn { padding: 8px 12px; border-radius: 4px; cursor: pointer; text-decoration: none; font-size: 0.85rem; border: none; font-weight: 500; color: white; transition: 0.2s; }
-        .btn-map { background: var(--primary-red); }
-        .btn-map:hover { background: var(--hover-red); }
-        .btn-ai { background: var(--ai-purple); }
-        .btn-ai:hover { opacity: 0.9; }
-        .btn-user { background: #1565c0; }
-        .btn-user:hover { opacity: 0.9; }
-        .btn-call { background: #2e7d32; }
-        .btn-call:hover { opacity: 0.9; }
-        .btn-deactivate { background: #f57c00; }
-        .btn-deactivate:hover { opacity: 0.9; }
-        .btn-delete { background: #b71c1c; }
-        .btn-delete:hover { opacity: 0.9; }
-        .refresh-btn { background: #333; margin-bottom: 10px; }
-
-        /* Modal Styles */
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); }
-        .modal-content { background: white; margin: 10% auto; padding: 25px; border-radius: 12px; width: 50%; max-width: 600px; position: relative; box-shadow: 0 5px 30px rgba(0,0,0,0.3); }
-        .close { position: absolute; right: 20px; top: 15px; font-size: 24px; cursor: pointer; color: #666; }
-        .modal-header { border-bottom: 2px solid #eee; margin-bottom: 15px; padding-bottom: 10px; color: var(--ai-purple); display: flex; align-items: center; gap: 10px; }
-        #ai-response { line-height: 1.6; color: #444; white-space: pre-line; }
-        .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--ai-purple); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; display: none; margin: 20px auto; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SOS Admin</title>
+  <style>
+    :root {
+      --bg: #f3f6fb;
+      --panel: #ffffff;
+      --line: #d8dfeb;
+      --ink: #142033;
+      --muted: #5f6f86;
+      --primary: #0f4f88;
+      --danger: #b71c1c;
+      --warn: #e77e1f;
+      --ok: #1f7a3b;
+      --violet: #5f3dc4;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font-family: "Segoe UI", Arial, sans-serif; }
+    .shell { max-width: 1200px; margin: 0 auto; padding: 1rem; display: grid; gap: .9rem; }
+    .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 1rem; }
+    .top { display: flex; justify-content: space-between; gap: .7rem; align-items: center; flex-wrap: wrap; }
+    h1, h2, h3 { margin: 0; }
+    h1 { font-size: 1.4rem; }
+    h2 { font-size: 1.1rem; }
+    .muted { color: var(--muted); font-size: .9rem; }
+    .row { display: flex; gap: .6rem; flex-wrap: wrap; align-items: center; }
+    .auth { max-width: 420px; margin: 8vh auto; }
+    .stack { display: grid; gap: .55rem; }
+    input { width: 100%; padding: .62rem .7rem; border: 1px solid #c7d1df; border-radius: 8px; }
+    button, .btn {
+      border: 0; border-radius: 8px; padding: .55rem .78rem; color: #fff;
+      background: var(--primary); cursor: pointer; font-weight: 600; text-decoration: none; display: inline-flex;
+      align-items: center; gap: .35rem;
+    }
+    button:hover, .btn:hover { filter: brightness(1.04); }
+    .btn-danger { background: var(--danger); }
+    .btn-warn { background: var(--warn); }
+    .btn-violet { background: var(--violet); }
+    .btn-ok { background: var(--ok); }
+    table { width: 100%; border-collapse: collapse; margin-top: .8rem; }
+    th, td { text-align: left; border-bottom: 1px solid #e2e7f0; padding: .66rem; vertical-align: top; }
+    th { background: #f8fafc; }
+    .badge { border-radius: 999px; padding: .15rem .5rem; font-size: .75rem; font-weight: 700; text-transform: uppercase; }
+    .badge.active { background: #ffe3e3; color: #9e1d1d; }
+    .badge.inactive { background: #fff1df; color: #a55a15; }
+    .badge.other { background: #e9eef7; color: #445266; }
+    .source { font-size: .8rem; color: #4e5f76; }
+    .actions { display: flex; gap: .4rem; flex-wrap: wrap; }
+    .hidden { display: none !important; }
+    .flash {
+      position: fixed; left: 12px; bottom: 12px; background: #132238; color: #fff; padding: .5rem .72rem;
+      border-radius: 8px; opacity: 0; transform: translateY(12px); transition: .2s; pointer-events: none;
+    }
+    .flash.show { opacity: 1; transform: translateY(0); }
+    .flash.err { background: #8f1f27; }
+    .modal { display: none; position: fixed; inset: 0; background: rgba(10, 17, 30, .55); }
+    .modal.show { display: grid; place-items: center; }
+    .modal-box { width: min(650px, 92vw); background: #fff; border-radius: 12px; padding: 1rem; }
+    .pre { white-space: pre-wrap; line-height: 1.5; color: #2e3a4d; }
+  </style>
 </head>
 <body>
+  <main class="shell">
+    <section id="authPanel" class="panel auth">
+      <h2>Admin Login</h2>
+      <p class="muted">Sign in with an account that has <code>role=admin</code>.</p>
+      <form id="loginForm" class="stack">
+        <input name="phone" placeholder="Phone" required />
+        <input name="password" type="password" placeholder="Password" required />
+        <button type="submit">Login</button>
+      </form>
+    </section>
 
-<nav>🚨 SOS EMERGENCY ADMIN PANEL</nav>
+    <section id="appPanel" class="hidden">
+      <div class="panel top">
+        <div>
+          <h1>SOS Emergency Admin</h1>
+          <p class="muted">Secure dashboard for emergency monitoring and response.</p>
+        </div>
+        <div class="row">
+          <button id="refreshBtn">Refresh</button>
+          <button id="logoutBtn" class="btn-danger">Logout</button>
+        </div>
+      </div>
 
-<div class="container">
-    <button class="btn refresh-btn" onclick="fetchAlerts()">🔄 Refresh Alerts</button>
-    <div class="card">
-        <h3>Recent Emergency Alerts</h3>
+      <div class="panel">
+        <h3>Recent Alerts</h3>
         <table>
-            <thead>
-                <tr>
-                    <th>Time</th>
-                    <th>User</th>
-                    <th>Source</th>
-                    <th>Coordinates</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody id="alerts-body"></tbody>
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>User</th>
+              <th>Source</th>
+              <th>Coordinates</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="alertsBody"></tbody>
         </table>
-    </div>
-</div>
+      </div>
+    </section>
+  </main>
 
-<div id="aiModal" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="closeModal()">&times;</span>
-        <div class="modal-header">
-            <h3>🤖 Gemini AI Location Analysis</h3>
-        </div>
-        <div id="loader" class="loader"></div>
-        <div id="ai-response">Select an alert to analyze location context...</div>
+  <div id="aiModal" class="modal">
+    <div class="modal-box">
+      <div class="top" style="margin-bottom:.5rem"><h3>AI Location Analysis</h3><button onclick="closeAiModal()" class="btn-danger">Close</button></div>
+      <div id="aiOut" class="pre">Loading...</div>
     </div>
-</div>
+  </div>
 
-<div id="userModal" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="closeUserModal()">&times;</span>
-        <div class="modal-header">
-            <h3>👤 User Detail</h3>
-        </div>
-        <div id="user-response">Select a user to view details...</div>
+  <div id="userModal" class="modal">
+    <div class="modal-box">
+      <div class="top" style="margin-bottom:.5rem"><h3>User Detail</h3><button onclick="closeUserModal()" class="btn-danger">Close</button></div>
+      <div id="userOut" class="pre">Loading...</div>
     </div>
-</div>
+  </div>
 
-<script>
+  <p id="flash" class="flash"></p>
+
+  <script>
     const BASE_URL = "https://sos-backend-q0h6.onrender.com";
-    const modal = document.getElementById("aiModal");
-    const userModal = document.getElementById("userModal");
-    const aiResponse = document.getElementById("ai-response");
-    const userResponse = document.getElementById("user-response");
-    const loader = document.getElementById("loader");
+    let token = localStorage.getItem("sos_admin_token") || "";
+    let flashTimer = null;
+
+    const el = {
+      authPanel: document.getElementById("authPanel"),
+      appPanel: document.getElementById("appPanel"),
+      loginForm: document.getElementById("loginForm"),
+      refreshBtn: document.getElementById("refreshBtn"),
+      logoutBtn: document.getElementById("logoutBtn"),
+      alertsBody: document.getElementById("alertsBody"),
+      aiModal: document.getElementById("aiModal"),
+      userModal: document.getElementById("userModal"),
+      aiOut: document.getElementById("aiOut"),
+      userOut: document.getElementById("userOut"),
+      flash: document.getElementById("flash"),
+    };
+
+    function toast(msg, err=false) {
+      el.flash.textContent = msg;
+      el.flash.className = `flash show ${err ? "err" : ""}`.trim();
+      if (flashTimer) clearTimeout(flashTimer);
+      flashTimer = setTimeout(() => el.flash.classList.remove("show"), 2600);
+    }
+
+    async function api(path, options={}) {
+      const headers = new Headers(options.headers || {});
+      if (token) headers.set("Authorization", `Bearer ${token}`);
+      if (!headers.has("Content-Type") && options.body && !(options.body instanceof FormData)) {
+        headers.set("Content-Type", "application/json");
+      }
+      const res = await fetch(`${BASE_URL}${path}`, { ...options, headers });
+      const text = await res.text();
+      let data = {};
+      try { data = text ? JSON.parse(text) : {}; } catch { data = { raw: text }; }
+      if (!res.ok) throw new Error(data.detail || `${res.status} ${res.statusText}`);
+      return data;
+    }
+
+    function setAuthUi() {
+      const on = !!token;
+      el.authPanel.classList.toggle("hidden", on);
+      el.appPanel.classList.toggle("hidden", !on);
+    }
+
+    function statusBadge(status) {
+      const s = String(status || "unknown").toLowerCase();
+      const cls = s === "active" ? "active" : (s === "inactive" ? "inactive" : "other");
+      return `<span class="badge ${cls}">${s}</span>`;
+    }
+
+    function esc(v) {
+      return String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
+    }
 
     async function fetchAlerts() {
+      if (!token) return;
+      try {
+        const data = await api("/admin/all-alerts");
+        el.alertsBody.innerHTML = "";
+
+        data.forEach(alert => {
+          const date = new Date(alert.created_at).toLocaleString();
+          const user = alert.user || {};
+          const fullName = user.full_name || alert.full_name || "Unknown";
+          const userId = user.id || alert.user_id || "";
+          const sourceType = (alert.source_type || "app").toUpperCase();
+          const sourceDeviceUid = alert.source_device_uid || "";
+          const lat = Number(alert.latitude).toFixed(4);
+          const lon = Number(alert.longitude).toFixed(4);
+          const mapUrl = `https://www.google.com/maps?q=${alert.latitude},${alert.longitude}`;
+
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${esc(date)}</td>
+            <td><small>${esc(fullName)}<br>${esc(String(userId).slice(0,8))}...</small></td>
+            <td class="source">${esc(sourceType)}${sourceDeviceUid ? `<br>${esc(sourceDeviceUid)}` : ""}</td>
+            <td>${lat}, ${lon}</td>
+            <td>${statusBadge(alert.status)}</td>
+            <td>
+              <div class="actions">
+                <a class="btn" href="${mapUrl}" target="_blank" rel="noopener">Map</a>
+                <button class="btn btn-violet" data-ai="${alert.latitude},${alert.longitude}">AI</button>
+                <button class="btn" data-user='${JSON.stringify({
+                  id: userId,
+                  full_name: fullName,
+                  phone: user.phone || alert.phone || "N/A",
+                  emergency_contact: user.emergency_contact || "N/A",
+                  blood_type: user.blood_type || "N/A",
+                  role: user.role || "N/A"
+                }).replace(/'/g, "&#39;")}'>User</button>
+                <button class="btn btn-warn" data-deactivate="${alert.id}">Deactivate</button>
+                <button class="btn btn-danger" data-delete="${alert.id}">Delete</button>
+              </div>
+            </td>
+          `;
+          el.alertsBody.appendChild(tr);
+        });
+      } catch (e) {
+        toast(`Failed to load alerts: ${e.message}`, true);
+      }
+    }
+
+    async function loadUserDetails(user) {
+      if (!user.id || user.full_name !== "Unknown") return user;
+      try { return await api(`/admin/user/${user.id}`); } catch { return user; }
+    }
+
+    window.closeAiModal = () => el.aiModal.classList.remove("show");
+    window.closeUserModal = () => el.userModal.classList.remove("show");
+
+    el.loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const f = new FormData(el.loginForm);
+      const body = new URLSearchParams();
+      body.set("username", String(f.get("phone") || ""));
+      body.set("password", String(f.get("password") || ""));
+      try {
+        const data = await api("/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body,
+        });
+        token = data.access_token || "";
+        localStorage.setItem("sos_admin_token", token);
+        setAuthUi();
+        toast("Login successful.");
+        await fetchAlerts();
+      } catch (err) {
+        toast(`Login failed: ${err.message}`, true);
+      }
+    });
+
+    el.refreshBtn.addEventListener("click", fetchAlerts);
+    el.logoutBtn.addEventListener("click", () => {
+      token = "";
+      localStorage.removeItem("sos_admin_token");
+      setAuthUi();
+      el.alertsBody.innerHTML = "";
+      toast("Logged out.");
+    });
+
+    el.alertsBody.addEventListener("click", async (e) => {
+      const ai = e.target.getAttribute("data-ai");
+      const user = e.target.getAttribute("data-user");
+      const deactivateId = e.target.getAttribute("data-deactivate");
+      const deleteId = e.target.getAttribute("data-delete");
+
+      if (ai) {
+        const [lat, lon] = ai.split(",").map(Number);
+        el.aiOut.textContent = "Loading...";
+        el.aiModal.classList.add("show");
         try {
-            const response = await fetch(`${BASE_URL}/admin/all-alerts`);
-            const data = await response.json();
-            const tableBody = document.getElementById('alerts-body');
-            tableBody.innerHTML = ""; 
-
-            data.forEach(alert => {
-                const date = new Date(alert.created_at).toLocaleString();
-                const googleMapsUrl = `https://www.google.com/maps?q=${alert.latitude},${alert.longitude}`;
-                const user = alert.user || {};
-                const fullName = user.full_name || alert.full_name || "Unknown";
-                const userPhone = user.phone || alert.phone || "N/A";
-                const emergencyContact = user.emergency_contact || "N/A";
-                const bloodType = user.blood_type || "N/A";
-                const userRole = user.role || "N/A";
-                const userId = user.id || alert.user_id || "";
-                const sourceType = (alert.source_type || "app").toUpperCase();
-                const sourceDeviceUid = alert.source_device_uid || "";
-                
-                const row = `
-                    <tr>
-                        <td>${date}</td>
-                        <td><small>${fullName}<br>${String(userId).substring(0,8)}...</small></td>
-                        <td><small>${sourceType}${sourceDeviceUid ? `<br>${sourceDeviceUid}` : ""}</small></td>
-                        <td>${alert.latitude.toFixed(4)}, ${alert.longitude.toFixed(4)}</td>
-                        <td><span class="status-active">${alert.status}</span></td>
-                        <td>
-                            <div class="btn-group">
-                                <a href="${googleMapsUrl}" target="_blank" class="btn btn-map">📍 Map</a>
-                                <button onclick="analyzeLocation(${alert.latitude}, ${alert.longitude})" class="btn btn-ai">🤖 Analyze AI</button>
-                                <button
-                                    onclick='showUserDetails(${JSON.stringify({
-                                        id: userId,
-                                        full_name: fullName,
-                                        phone: userPhone,
-                                        emergency_contact: emergencyContact,
-                                        blood_type: bloodType,
-                                        role: userRole
-                                    }).replace(/'/g, "&#39;")})'
-                                    class="btn btn-user"
-                                >👤 User Detail</button>
-                                <button onclick="deactivateAlert('${alert.id}')" class="btn btn-deactivate">⏸ Deactivate</button>
-                                <button onclick="deleteAlert('${alert.id}')" class="btn btn-delete">🗑 Delete</button>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-                tableBody.innerHTML += row;
-            });
-        } catch (error) {
-            console.error("Error:", error);
+          const data = await api("/admin/analyze-location", {
+            method: "POST",
+            body: JSON.stringify({ latitude: lat, longitude: lon })
+          });
+          el.aiOut.textContent = data.analysis || "No analysis.";
+        } catch (err) {
+          el.aiOut.textContent = `Error: ${err.message}`;
         }
-    }
+      }
 
-    async function analyzeLocation(lat, lon) {
-        // Open Modal and show loading
-        modal.style.display = "block";
-        aiResponse.innerText = "";
-        loader.style.display = "block";
-
-        try {
-            const response = await fetch(`${BASE_URL}/admin/analyze-location`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ latitude: lat, longitude: lon })
-            });
-            const data = await response.json();
-            
-            loader.style.display = "none";
-            aiResponse.innerText = data.analysis;
-        } catch (error) {
-            loader.style.display = "none";
-            aiResponse.innerText = "Error: Could not reach Gemini AI Service.";
-        }
-    }
-
-    function closeModal() {
-        modal.style.display = "none";
-    }
-
-    function needsLookup(user) {
-        return !user
-            || !user.id
-            || user.full_name === "Unknown"
-            || user.phone === "N/A"
-            || user.emergency_contact === "N/A"
-            || user.blood_type === "N/A"
-            || user.role === "N/A";
-    }
-
-    async function loadUserDetails(userId) {
-        if (!userId) return null;
-        try {
-            const response = await fetch(`${BASE_URL}/admin/user/${userId}`);
-            if (!response.ok) return null;
-            return await response.json();
-        } catch (error) {
-            return null;
-        }
-    }
-
-    async function showUserDetails(user) {
-        let details = user;
-        if (needsLookup(user)) {
-            const fetched = await loadUserDetails(user.id);
-            if (fetched) details = fetched;
-        }
-
+      if (user) {
+        const parsed = JSON.parse(user);
+        const details = await loadUserDetails(parsed);
         const callBtn = details.emergency_contact && details.emergency_contact !== "N/A"
-            ? `<a href="tel:${details.emergency_contact}" class="btn btn-call">📞 Call Emergency Contact</a>`
-            : `<span style="color:#888">No emergency contact available</span>`;
+          ? `<a class='btn btn-ok' href='tel:${esc(details.emergency_contact)}'>Call Emergency Contact</a>`
+          : "<span class='muted'>No emergency contact</span>";
 
-        userResponse.innerHTML = `
-            <p><strong>Full Name:</strong> ${details.full_name || "N/A"}</p>
-            <p><strong>User ID:</strong> ${details.id || "N/A"}</p>
-            <p><strong>Phone:</strong> ${details.phone || "N/A"}</p>
-            <p><strong>Emergency Contact:</strong> ${details.emergency_contact || "N/A"}</p>
-            <p><strong>Blood Type:</strong> ${details.blood_type || "N/A"}</p>
-            <p><strong>Role:</strong> ${details.role || "N/A"}</p>
-            <div style="margin-top: 14px;">${callBtn}</div>
-        `;
-        userModal.style.display = "block";
-    }
+        el.userOut.innerHTML = `
+Full Name: ${esc(details.full_name || "N/A")}\n
+User ID: ${esc(details.id || "N/A")}\n
+Phone: ${esc(details.phone || "N/A")}\n
+Emergency Contact: ${esc(details.emergency_contact || "N/A")}\n
+Blood Type: ${esc(details.blood_type || "N/A")}\n
+Role: ${esc(details.role || "N/A")}\n
+${callBtn}`;
+        el.userModal.classList.add("show");
+      }
 
-    function closeUserModal() {
-        userModal.style.display = "none";
-    }
-
-    async function deactivateAlert(alertId) {
+      if (deactivateId) {
         if (!confirm("Deactivate this alert?")) return;
         try {
-            const response = await fetch(`${BASE_URL}/admin/alerts/${alertId}/deactivate`, {
-                method: "PUT"
-            });
-            const data = await response.json();
-            if (!response.ok) throw new Error(data.detail || "Deactivate failed");
-            fetchAlerts();
-        } catch (error) {
-            alert("Deactivate failed: " + error.message);
+          await api(`/admin/alerts/${deactivateId}/deactivate`, { method: "PUT" });
+          toast("Alert deactivated.");
+          fetchAlerts();
+        } catch (err) {
+          toast(`Deactivate failed: ${err.message}`, true);
         }
-    }
+      }
 
-    async function deleteAlert(alertId) {
+      if (deleteId) {
         if (!confirm("Delete this alert permanently?")) return;
         try {
-            const response = await fetch(`${BASE_URL}/admin/alerts/${alertId}`, {
-                method: "DELETE"
-            });
-            const data = await response.json();
-            if (!response.ok) throw new Error(data.detail || "Delete failed");
-            fetchAlerts();
-        } catch (error) {
-            alert("Delete failed: " + error.message);
+          await api(`/admin/alerts/${deleteId}`, { method: "DELETE" });
+          toast("Alert deleted.");
+          fetchAlerts();
+        } catch (err) {
+          toast(`Delete failed: ${err.message}`, true);
         }
-    }
+      }
+    });
 
-    // Close modal when clicking outside
-    window.onclick = function(event) {
-        if (event.target == modal) closeModal();
-        if (event.target == userModal) closeUserModal();
-    }
+    window.addEventListener("click", (e) => {
+      if (e.target === el.aiModal) el.aiModal.classList.remove("show");
+      if (e.target === el.userModal) el.userModal.classList.remove("show");
+    });
 
-    fetchAlerts();
-    setInterval(fetchAlerts, 30000);
-</script>
-
+    setAuthUi();
+    if (token) fetchAlerts();
+    setInterval(() => { if (token) fetchAlerts(); }, 30000);
+  </script>
 </body>
 </html>
