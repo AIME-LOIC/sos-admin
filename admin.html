@@ -119,6 +119,19 @@
     </div>
   </div>
 
+  <div id="confirmModal" class="modal">
+    <div class="modal-box">
+      <div class="top" style="margin-bottom:.5rem">
+        <h3 id="confirmTitle">Confirm Action</h3>
+      </div>
+      <p id="confirmOut" class="pre">Are you sure?</p>
+      <div class="row" style="justify-content:flex-end">
+        <button id="confirmCancel" class="btn-warn">Cancel</button>
+        <button id="confirmOk" class="btn-danger">Confirm</button>
+      </div>
+    </div>
+  </div>
+
   <p id="flash" class="flash"></p>
 
   <script>
@@ -137,6 +150,11 @@
       userModal: document.getElementById("userModal"),
       aiOut: document.getElementById("aiOut"),
       userOut: document.getElementById("userOut"),
+      confirmModal: document.getElementById("confirmModal"),
+      confirmTitle: document.getElementById("confirmTitle"),
+      confirmOut: document.getElementById("confirmOut"),
+      confirmCancel: document.getElementById("confirmCancel"),
+      confirmOk: document.getElementById("confirmOk"),
       flash: document.getElementById("flash"),
     };
 
@@ -175,6 +193,29 @@
 
     function esc(v) {
       return String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
+    }
+
+    function confirmPopup(message, title="Confirm Action") {
+      return new Promise((resolve) => {
+        el.confirmTitle.textContent = title;
+        el.confirmOut.textContent = message;
+        el.confirmModal.classList.add("show");
+
+        const done = (value) => {
+          el.confirmModal.classList.remove("show");
+          el.confirmOk.removeEventListener("click", onOk);
+          el.confirmCancel.removeEventListener("click", onCancel);
+          el.confirmModal.removeEventListener("click", onBackdrop);
+          resolve(value);
+        };
+        const onOk = () => done(true);
+        const onCancel = () => done(false);
+        const onBackdrop = (e) => { if (e.target === el.confirmModal) done(false); };
+
+        el.confirmOk.addEventListener("click", onOk);
+        el.confirmCancel.addEventListener("click", onCancel);
+        el.confirmModal.addEventListener("click", onBackdrop);
+      });
     }
 
     async function fetchAlerts() {
@@ -304,7 +345,8 @@ ${callBtn}`;
       }
 
       if (deactivateId) {
-        if (!confirm("Deactivate this alert?")) return;
+        const ok = await confirmPopup("Deactivate this alert?", "Deactivate Alert");
+        if (!ok) return;
         try {
           await api(`/admin/alerts/${deactivateId}/deactivate`, { method: "PUT" });
           toast("Alert deactivated.");
@@ -315,7 +357,8 @@ ${callBtn}`;
       }
 
       if (deleteId) {
-        if (!confirm("Delete this alert permanently?")) return;
+        const ok = await confirmPopup("Delete this alert permanently?", "Delete Alert");
+        if (!ok) return;
         try {
           await api(`/admin/alerts/${deleteId}`, { method: "DELETE" });
           toast("Alert deleted.");
@@ -329,6 +372,7 @@ ${callBtn}`;
     window.addEventListener("click", (e) => {
       if (e.target === el.aiModal) el.aiModal.classList.remove("show");
       if (e.target === el.userModal) el.userModal.classList.remove("show");
+      if (e.target === el.confirmModal) el.confirmModal.classList.remove("show");
     });
 
     setAuthUi();
