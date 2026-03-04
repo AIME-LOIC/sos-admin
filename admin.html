@@ -59,6 +59,7 @@
                 <tr>
                     <th>Time</th>
                     <th>User</th>
+                    <th>Source</th>
                     <th>Coordinates</th>
                     <th>Status</th>
                     <th>Actions</th>
@@ -115,11 +116,14 @@
                 const bloodType = user.blood_type || "N/A";
                 const userRole = user.role || "N/A";
                 const userId = user.id || alert.user_id || "";
+                const sourceType = (alert.source_type || "app").toUpperCase();
+                const sourceDeviceUid = alert.source_device_uid || "";
                 
                 const row = `
                     <tr>
                         <td>${date}</td>
                         <td><small>${fullName}<br>${String(userId).substring(0,8)}...</small></td>
+                        <td><small>${sourceType}${sourceDeviceUid ? `<br>${sourceDeviceUid}` : ""}</small></td>
                         <td>${alert.latitude.toFixed(4)}, ${alert.longitude.toFixed(4)}</td>
                         <td><span class="status-active">${alert.status}</span></td>
                         <td>
