@@ -254,6 +254,7 @@
                   blood_type: user.blood_type || "N/A",
                   role: user.role || "N/A"
                 }).replace(/'/g, "&#39;")}'>User</button>
+                ${sourceDeviceUid ? `<button class="btn btn-warn" data-unlink-device="${esc(sourceDeviceUid)}">Disconnect Device</button>` : ""}
                 <button class="btn btn-warn" data-deactivate="${alert.id}">Deactivate</button>
                 <button class="btn btn-danger" data-delete="${alert.id}">Delete</button>
               </div>
@@ -308,6 +309,7 @@
     el.alertsBody.addEventListener("click", async (e) => {
       const ai = e.target.getAttribute("data-ai");
       const user = e.target.getAttribute("data-user");
+      const unlinkDeviceUid = e.target.getAttribute("data-unlink-device");
       const deactivateId = e.target.getAttribute("data-deactivate");
       const deleteId = e.target.getAttribute("data-delete");
 
@@ -353,6 +355,21 @@ ${callBtn}`;
           fetchAlerts();
         } catch (err) {
           toast(`Deactivate failed: ${err.message}`, true);
+        }
+      }
+
+      if (unlinkDeviceUid) {
+        const ok = await confirmPopup(`Disconnect device ${unlinkDeviceUid} from its user?`, "Disconnect Device");
+        if (!ok) return;
+        try {
+          await api("/admin/devices/unlink", {
+            method: "POST",
+            body: JSON.stringify({ device_uid: unlinkDeviceUid, rotate_token: true }),
+          });
+          toast(`Device ${unlinkDeviceUid} disconnected.`);
+          fetchAlerts();
+        } catch (err) {
+          toast(`Disconnect device failed: ${err.message}`, true);
         }
       }
 
