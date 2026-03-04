@@ -34,6 +34,10 @@
         .btn-user:hover { opacity: 0.9; }
         .btn-call { background: #2e7d32; }
         .btn-call:hover { opacity: 0.9; }
+        .btn-deactivate { background: #f57c00; }
+        .btn-deactivate:hover { opacity: 0.9; }
+        .btn-delete { background: #b71c1c; }
+        .btn-delete:hover { opacity: 0.9; }
         .refresh-btn { background: #333; margin-bottom: 10px; }
 
         /* Modal Styles */
@@ -141,6 +145,8 @@
                                     }).replace(/'/g, "&#39;")})'
                                     class="btn btn-user"
                                 >👤 User Detail</button>
+                                <button onclick="deactivateAlert('${alert.id}')" class="btn btn-deactivate">⏸ Deactivate</button>
+                                <button onclick="deleteAlert('${alert.id}')" class="btn btn-delete">🗑 Delete</button>
                             </div>
                         </td>
                     </tr>
@@ -224,6 +230,34 @@
 
     function closeUserModal() {
         userModal.style.display = "none";
+    }
+
+    async function deactivateAlert(alertId) {
+        if (!confirm("Deactivate this alert?")) return;
+        try {
+            const response = await fetch(`${BASE_URL}/admin/alerts/${alertId}/deactivate`, {
+                method: "PUT"
+            });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.detail || "Deactivate failed");
+            fetchAlerts();
+        } catch (error) {
+            alert("Deactivate failed: " + error.message);
+        }
+    }
+
+    async function deleteAlert(alertId) {
+        if (!confirm("Delete this alert permanently?")) return;
+        try {
+            const response = await fetch(`${BASE_URL}/admin/alerts/${alertId}`, {
+                method: "DELETE"
+            });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.detail || "Delete failed");
+            fetchAlerts();
+        } catch (error) {
+            alert("Delete failed: " + error.message);
+        }
     }
 
     // Close modal when clicking outside
